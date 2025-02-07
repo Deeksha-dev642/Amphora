@@ -1,1 +1,65 @@
+class ProductsPage {
+  openProductsDropdown() {
+    cy.get('nav').contains('Products').trigger('mouseover'); // Hover over "Products"
+  }
+
+  getProductList() {
+    return cy.get('.dropdown-menu a'); // Select all product links (update selector as needed)
+  }
+
+  clickProduct(index) {
+    this.getProductList().eq(index).click(); // Click on product by index
+  }
+
+  verifyProductPage() {
+    cy.get('h1, .product-title') // Replace with the correct selector for product page title
+      .should('be.visible');
+  }
+}
+
+export default new ProductsPage();
+
+
+import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
+import ProductsPage from "../../pages/ProductsPage";
+
+Given("I open the Amphora website", () => {
+  cy.visit("https://www.amphora.net");
+});
+
+When("I hover over the {string} dropdown", (dropdown) => {
+  if (dropdown === "Products") {
+    ProductsPage.openProductsDropdown();
+  }
+});
+
+When("I click on each product one by one", () => {
+  ProductsPage.getProductList().then(($products) => {
+    cy.wrap($products).each(($product, index) => {
+      cy.wrap($product).invoke("text").then((productName) => {
+        cy.wrap($product).click(); // Click on the product
+        cy.wait(2000); // Wait for the page to load
+
+        ProductsPage.verifyProductPage(); // Check if product page is displayed
+        cy.url().should("include", productName.toLowerCase().replace(/\s+/g, "-")); // Verify URL contains product name
+
+        cy.go("back"); // Go back to the homepage
+        ProductsPage.openProductsDropdown(); // Reopen dropdown
+      });
+    });
+  });
+});
+
+Then("I should see the correct product page", () => {
+  ProductsPage.verifyProductPage(); // Ensure product page is visible
+});
+
+
+Feature: Product Navigation
+
+  Scenario: Click all products from the dropdown and verify pages
+    Given I open the Amphora website
+    When I hover over the "Products" dropdown
+    And I click on each product one by one
+    Then I should see the correct product page
 
