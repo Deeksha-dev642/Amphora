@@ -15,3 +15,18 @@ Feature: Login Functionality
     When I enter valid credentials
     And I click the login button
     Then I should see the homepage
+
+cypress-automation/
+│── cypress/
+│   ├── e2e/               # Test cases
+│   │   ├── ui/            # UI tests (Cucumber feature files)
+│   │   ├── api/           # API tests (JavaScript tests)
+│   ├── support/           
+│   │   ├── pages/         # Page Object Model (POM) classes
+│   │   ├── step_definitions/ # Cucumber step definitions
+│   │   ├── commands.js    # Custom Cypress commands
+│   ├── fixtures/          # Test data
+│── reports/               # Test reports
+│── cypress.config.js      # Cypress configuration
+│── package.json           # Dependencies
+│── README.md              # Project documentation
