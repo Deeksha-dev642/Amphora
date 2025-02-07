@@ -1,0 +1,64 @@
+class NewsletterPage {
+  openResourcesDropdown() {
+    cy.get('nav').contains('Resources').trigger('mouseover'); // Hover over "Resources"
+  }
+
+  clickNewsletterSignup() {
+    cy.contains("Newsletter Signup").click(); // Click on the newsletter signup link
+  }
+
+  enterEmail(email) {
+    cy.get('input[type="email"]').type(email); // Type email (update selector if needed)
+  }
+
+  submitForm() {
+    cy.get('button[type="submit"]').click(); // Click the signup button
+  }
+
+  verifySuccessMessage() {
+    cy.contains("Thank you for signing up for our newsletter.").should("be.visible");
+  }
+}
+
+export default new NewsletterPage();
+
+Feature: Newsletter Signup
+
+  Scenario: Successfully sign up for the newsletter
+    Given I open the Amphora website
+    When I hover over the "Resources" dropdown
+    And I navigate to the newsletter signup page
+    And I enter a valid email
+    And I submit the newsletter form
+    Then I should see a success message "Thank you for signing up for our newsletter."
+
+
+import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
+import NewsletterPage from "../../pages/NewsletterPage";
+
+Given("I open the Amphora website", () => {
+  cy.visit("https://www.amphora.net");
+});
+
+When("I hover over the {string} dropdown", (dropdown) => {
+  if (dropdown === "Resources") {
+    NewsletterPage.openResourcesDropdown();
+  }
+});
+
+When("I navigate to the newsletter signup page", () => {
+  NewsletterPage.clickNewsletterSignup();
+});
+
+When("I enter a valid email", () => {
+  const randomEmail = `test${Date.now()}@example.com`; // Generate unique email
+  NewsletterPage.enterEmail(randomEmail);
+});
+
+When("I submit the newsletter form", () => {
+  NewsletterPage.submitForm();
+});
+
+Then("I should see a success message {string}", (successMessage) => {
+  NewsletterPage.verifySuccessMessage();
+});
